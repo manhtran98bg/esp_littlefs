@@ -427,7 +427,7 @@ static esp_vfs_fs_ops_t s_vfs_littlefs = {
 #endif // ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 4, 0)
 
 
-lfs_t * lv_littlefs_port_init(const esp_vfs_littlefs_conf_t * conf)
+lfs_t * esp_littlefs_lvgl_port_init(const esp_vfs_littlefs_conf_t * conf)
 {
     int index;
     assert(conf->base_path);

@@ -7,6 +7,8 @@
 #include <stdbool.h>
 #include "esp_partition.h"
 
+#include "littlefs/lfs.h"
+
 #ifdef CONFIG_LITTLEFS_SDMMC_SUPPORT
 #include <sdmmc_cmd.h>
 #endif
@@ -48,7 +50,6 @@ typedef struct {
     uint8_t grow_on_mount:1;          /**< Grow filesystem to match partition size on mount.*/
 } esp_vfs_littlefs_conf_t;
 
-
 /**
  * Initialize and mount LittleFS for LVGL integration.
  *
@@ -59,31 +60,7 @@ typedef struct {
  * Unlike esp_vfs_littlefs_register(), this function does not register
  * the filesystem to ESP-IDF VFS. It is designed for use cases where LVGL
  * manages file access directly through lv_fs API.
- *
- * Typical usage:
- * @code
- * esp_vfs_littlefs_conf_t conf = {
- *     .base_path = BSP_LITTLEFS_MOUNT_POINT,
- *     .partition_label = BSP_LITTLEFS_PARTITION_LABEL,
- *     .format_if_mount_failed = true,
- *     .dont_mount = false,
- * };
- *
- * lv_fs_littlefs_init();
- * lfs_t *lfs = esp_littlefs_lvgl_port_init(&conf);
- * if (lfs != NULL) {
- *     lv_littlefs_set_handler(lfs);
- *     lv_fs_file_t file;
- *     lv_fs_res_t ret = lv_fs_open(&file, "A:/example.txt", LV_FS_MODE_RD);
- *     if (ret == LV_FS_RES_OK) {
- *         char buffer[100];
- *         uint32_t bytes;
- *         lv_fs_read(&file, buffer, sizeof(buffer)-1, &bytes);
- *         buffer[bytes] = '\0';
- *         printf("%s\n", buffer);
- *     }
- * }
- * @endcode
+
  *
  * @param   conf                      Pointer to esp_vfs_littlefs_conf_t configuration structure
  *
@@ -92,6 +69,7 @@ typedef struct {
  *          - NULL                    if initialization or mount fails
  */
 lfs_t * esp_littlefs_lvgl_port_init(const esp_vfs_littlefs_conf_t * conf);
+
 
 /**
  * Register and mount (if configured to) littlefs to VFS with given path prefix.
